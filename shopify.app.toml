@@ -2,7 +2,7 @@
 
 client_id = "51a2e068ffa6efde70b1eb9fd5bf4212"
 name = "PayMongo Gateway"
-application_url = "https://shopify-webhook-3.onrender.com"
+application_url = "https://shopify-webhook-tau.vercel.app"
 embedded = true
 
 [build]
