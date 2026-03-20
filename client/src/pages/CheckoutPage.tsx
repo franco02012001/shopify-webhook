@@ -1,12 +1,13 @@
 import { useState } from 'react';
+import { Banner, Badge, BlockStack, Button, Card, InlineStack, Page, Text } from '@shopify/polaris';
 import { useSearchParams } from 'react-router-dom';
 import { apiUrl } from '../config';
 
 const METHODS = [
-  { id: 'gcash', label: 'GCash', icon: '💚' },
-  { id: 'card', label: 'Credit / Debit card', icon: '💳' },
-  { id: 'paymaya', label: 'Maya', icon: '🔵' },
-  { id: 'grab_pay', label: 'GrabPay', icon: '🟢' },
+  { id: 'gcash', label: 'GCash', icon: '💚', eta: 'Instant' },
+  { id: 'card', label: 'Credit / Debit card', icon: '💳', eta: 'Instant' },
+  { id: 'paymaya', label: 'Maya', icon: '🔵', eta: '1-2 mins' },
+  { id: 'grab_pay', label: 'GrabPay', icon: '🟢', eta: '1-2 mins' },
 ];
 
 export default function CheckoutPage() {
@@ -43,40 +44,71 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 w-full max-w-md p-6">
-        <h1 className="text-lg font-semibold text-gray-900 mb-1">Choose payment method</h1>
-        <p className="text-sm text-gray-500 mb-6">Secured by PayMongo</p>
+    <Page title="Checkout" subtitle="Select payment method for PayMongo">
+      <BlockStack gap="400">
+        <Card>
+          <BlockStack gap="300">
+            <InlineStack align="space-between">
+              <Text as="h2" variant="headingMd">
+                Available methods
+              </Text>
+              <Badge tone="info">Secured by PayMongo</Badge>
+            </InlineStack>
 
-        <div className="space-y-3 mb-6">
-          {METHODS.map((method) => (
-            <button
-              key={method.id}
-              onClick={() => setSelected(method.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left ${
-                selected === method.id
-                  ? 'border-indigo-500 bg-indigo-50'
-                  : 'border-gray-200'
-              }`}
-            >
-              <span className="text-xl">{method.icon}</span>
-              <span className="text-sm font-medium text-gray-700">{method.label}</span>
-            </button>
-          ))}
-        </div>
+            {METHODS.map((method) => (
+              <button
+                key={method.id}
+                onClick={() => setSelected(method.id)}
+                style={{
+                  border: selected === method.id ? '2px solid #005bd3' : '1px solid #dfe3e8',
+                  borderRadius: 12,
+                  background: selected === method.id ? '#f2f7ff' : 'white',
+                  padding: 12,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
+                <InlineStack align="space-between">
+                  <InlineStack gap="200">
+                    <Text as="span">{method.icon}</Text>
+                    <BlockStack gap="100">
+                      <Text as="p" variant="bodyMd" fontWeight="semibold">
+                        {method.label}
+                      </Text>
+                      <Text as="p" tone="subdued">
+                        Expected confirmation: {method.eta}
+                      </Text>
+                    </BlockStack>
+                  </InlineStack>
+                  {selected === method.id ? <Badge tone="info">Selected</Badge> : null}
+                </InlineStack>
+              </button>
+            ))}
 
-        {error && (
-          <p className="text-sm text-red-600 mb-4 bg-red-50 rounded-lg px-3 py-2">{error}</p>
-        )}
+            {error ? <Banner tone="critical">{error}</Banner> : null}
 
-        <button
-          onClick={handlePay}
-          disabled={!selected || loading}
-          className="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white disabled:bg-gray-100 disabled:text-gray-400"
-        >
-          {loading ? 'Redirecting...' : 'Pay now'}
-        </button>
-      </div>
-    </div>
+            <InlineStack align="end">
+              <Button onClick={handlePay} disabled={!selected || loading} variant="primary">
+                {loading ? 'Redirecting...' : 'Continue to payment'}
+              </Button>
+            </InlineStack>
+          </BlockStack>
+        </Card>
+
+        <Card>
+          <BlockStack gap="200">
+            <Text as="h3" variant="headingSm">
+              Session details
+            </Text>
+            <Text as="p" tone="subdued">
+              Session ID: {sessionId ?? 'Unavailable'}
+            </Text>
+            <Text as="p" tone="subdued">
+              Intent ID: {intentId ?? 'Unavailable'}
+            </Text>
+          </BlockStack>
+        </Card>
+      </BlockStack>
+    </Page>
   );
 }
