@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { apiUrl } from '../config';
 
 const METHODS = [
   { id: 'gcash', label: 'GCash', icon: '💚' },
@@ -22,7 +23,7 @@ export default function CheckoutPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/payment/attach', {
+      const res = await fetch(apiUrl('/payment/attach'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

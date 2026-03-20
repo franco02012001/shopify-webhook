@@ -7,6 +7,12 @@ async function bootstrap() {
     rawBody: true,
   });
 
+  const frontendUrl = process.env.FRONTEND_URL;
+  app.enableCors({
+    origin: frontendUrl ? [frontendUrl] : true,
+    credentials: true,
+  });
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   const port = process.env.PORT ?? 3000;
